@@ -100,7 +100,7 @@ Explain what changed and why.
 
 ## Projects in This Repository
 
-This repository hosts two self-contained environmental data cleaning projects, each equipped with its raw dataset, cleaning pipeline, domain-specific justifications, and oral defense guides.
+This repository hosts three self-contained environmental data cleaning projects, each equipped with its raw dataset, cleaning pipeline, domain-specific justifications, and oral defense guides.
 
 ### 1. Urban Air Quality Assessment
 
@@ -115,3 +115,10 @@ This repository hosts two self-contained environmental data cleaning projects, e
 * **Dataset:** `water_potability.csv` (3,276 rows × 10 columns)
 * **Domain:** Aquatic Chemistry & Public Health
 * **Brief Description:** This project evaluates laboratory water quality metrics to classify water drinkability according to World Health Organization (WHO) standards. It addresses selective laboratory test omission (with over 23% missing Sulfates and 15% missing pH values), probe calibration boundaries (enforcing the strict physical 0–14 pH scale), and extreme mineral solids skewness. The cleaning methodology uses class-conditional median imputation to preserve the distinct geochemical fingerprints of potable versus contaminated water bodies.
+
+### 3. Global Coastal Plastic Waste and Economic Mismanagement
+
+* **Directory:** [projects/coastal_plastic_waste/](projects/coastal_plastic_waste/README.md)
+* **Dataset:** `per-capita-mismanaged-plastic-waste-vs-gdp-per-capita.csv` (48,169 rows × 7 columns)
+* **Domain:** Marine Ecology & Environmental Economics
+* **Brief Description:** This project investigates cross-national coastal plastic waste mismanagement in relation to GDP per capita and population scale. It tackles extreme multi-source matrix sparsity (pruning over 47,900 historical pre-plastic rows), propagates static continental metadata across fragmented time series, removes non-sovereign macro-regional aggregates (`OWID_*` codes) to prevent double-counting, and justifies high-waste island nation outliers.
