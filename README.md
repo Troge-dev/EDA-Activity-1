@@ -95,3 +95,12 @@ Explain what changed and why.
 * Your presentation should cover everything listed above.
 * After the presentation, there will be an oral recitation.
 * Every member must understand the entire project. Any member may be asked to explain the dataset, code, cleaning method, or reasoning behind the group's decisions.
+
+---
+
+## Available Project Implementations in This Repository
+
+1. **[Urban Air Quality Assessment (city_day.csv)](projects/urban_air_quality/README.md)**
+   * Atmospheric telemetry, negative sensor drift, time-series interpolation, and seasonal inversion events.
+2. **[Water Potability and Chemical Safety Assessment (water_potability.csv)](projects/water_potability/README.md)**
+   * Physicochemical boundaries (pH 0–14), selective laboratory test missingness, and class-conditional median imputation.
