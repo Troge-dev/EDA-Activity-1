@@ -35,7 +35,7 @@ Urban air pollution is a major environmental health crisis, linked directly to c
 
 * **Dataset Title (Kaggle):** Air Quality Data in India (2015 - 2020)
 * **Dataset Creator:** Rohit Sahoo (Source: Central Pollution Control Board - CPCB)
-* **Primary File:** `city_day.csv` (Located in the root directory)
+* **Primary File:** `city_day.csv` (Located in this project directory)
 * **Dimensions:** 29,531 rows × 16 columns
 * **Time Span:** January 1, 2015 to July 1, 2020
 
@@ -83,7 +83,7 @@ The cleaning pipeline is structured into five distinct phases, documented below 
 import pandas as pd
 import numpy as np
 
-df = pd.read_csv("../city_day.csv")
+df = pd.read_csv("city_day.csv")
 
 # Convert string dates to datetime objects
 df["Date"] = pd.to_datetime(df["Date"], format="%Y-%m-%d")
@@ -210,7 +210,7 @@ import pandas as pd
 import numpy as np
 
 # Load dataset
-df = pd.read_csv("../city_day.csv")
+df = pd.read_csv("city_day.csv")
 
 # Run full pipeline
 df["Date"] = pd.to_datetime(df["Date"], format="%Y-%m-%d")
