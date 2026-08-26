@@ -98,9 +98,20 @@ Explain what changed and why.
 
 ---
 
-## Available Project Implementations in This Repository
+## Projects in This Repository
 
-1. **[Urban Air Quality Assessment (city_day.csv)](projects/urban_air_quality/README.md)**
-   * Atmospheric telemetry, negative sensor drift, time-series interpolation, and seasonal inversion events.
-2. **[Water Potability and Chemical Safety Assessment (water_potability.csv)](projects/water_potability/README.md)**
-   * Physicochemical boundaries (pH 0–14), selective laboratory test missingness, and class-conditional median imputation.
+This repository hosts two self-contained environmental data cleaning projects, each equipped with its raw dataset, cleaning pipeline, domain-specific justifications, and oral defense guides.
+
+### 1. Urban Air Quality Assessment
+
+* **Directory:** [projects/urban_air_quality/](projects/urban_air_quality/README.md)
+* **Dataset:** `city_day.csv` (29,531 rows × 16 columns)
+* **Domain:** Atmospheric Science & Environmental Health
+* **Brief Description:** This project analyzes multi-year ambient air quality telemetry across Indian metropolitan areas from the Central Pollution Control Board (CPCB). It tackles sensor calibration drift (negative concentration values), time-series continuity breaks, missing particulate readings (PM2.5, PM10, NO2), and categorical text formatting. It establishes domain rules to distinguish true severe pollution emergencies (e.g., winter atmospheric inversions and post-monsoon crop-stubble burning) from electronic sensor glitches.
+
+### 2. Water Potability and Chemical Safety Assessment
+
+* **Directory:** [projects/water_potability/](projects/water_potability/README.md)
+* **Dataset:** `water_potability.csv` (3,276 rows × 10 columns)
+* **Domain:** Aquatic Chemistry & Public Health
+* **Brief Description:** This project evaluates laboratory water quality metrics to classify water drinkability according to World Health Organization (WHO) standards. It addresses selective laboratory test omission (with over 23% missing Sulfates and 15% missing pH values), probe calibration boundaries (enforcing the strict physical 0–14 pH scale), and extreme mineral solids skewness. The cleaning methodology uses class-conditional median imputation to preserve the distinct geochemical fingerprints of potable versus contaminated water bodies.
