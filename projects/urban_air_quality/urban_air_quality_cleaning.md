@@ -8,19 +8,6 @@ Continuous ambient air quality monitoring stations (CAAQMS) deployed across majo
 
 This project demonstrates a systematic, domain-informed data cleaning workflow using Python and Pandas on daily urban air quality records.
 
----
-
-## Group Information and Member Roles
-
-| Group Member | Student ID | Primary Responsibility |
-| :--- | :--- | :--- |
-| Member 1 (Lead) | `[Student ID]` | Data Audit, Datatype Casting, Pipeline Architecture |
-| Member 2 | `[Student ID]` | Outlier Investigation, Physical Domain Boundary Checks |
-| Member 3 | `[Student ID]` | Missing Value Imputation Strategy, Time-Series Logic |
-| Member 4 | `[Student ID]` | Categorical Standardization, Before vs. After Reporting |
-
----
-
 ## Research Question and Problem Statement
 
 ### The Real-World Environmental Problem

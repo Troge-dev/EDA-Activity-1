@@ -8,19 +8,6 @@ Clean drinking water is fundamental to human health and environmental sustainabi
 
 This project implements a domain-informed data cleaning pipeline using Python and Pandas to evaluate, clean, and standardize freshwater safety records.
 
----
-
-## Group Information and Member Roles
-
-| Group Member | Student ID | Primary Responsibility |
-| :--- | :--- | :--- |
-| Member 1 (Lead) | `[Student ID]` | Data Audit, Missing Value Imputation Strategy, Pipeline Architecture |
-| Member 2 | `[Student ID]` | Chemical Boundary Verification (pH scale, Physical Limits) |
-| Member 3 | `[Student ID]` | Outlier and Skewness Analysis, Geochemical Rationale |
-| Member 4 | `[Student ID]` | Target Standardization, Before vs. After Comparative Reporting |
-
----
-
 ## Research Question and Problem Statement
 
 ### The Real-World Environmental Problem
