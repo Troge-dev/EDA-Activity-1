@@ -100,7 +100,7 @@ Explain what changed and why.
 
 ## Projects in This Repository
 
-This repository hosts three self-contained environmental data cleaning projects, each equipped with its raw dataset, cleaning pipeline, domain-specific justifications, and oral defense guides.
+This repository hosts four self-contained data cleaning projects across various domains, each equipped with its raw dataset, cleaning pipeline, domain-specific justifications, and oral defense guides.
 
 ### 1. Urban Air Quality Assessment
 
@@ -122,3 +122,11 @@ This repository hosts three self-contained environmental data cleaning projects,
 * **Dataset:** `per-capita-mismanaged-plastic-waste-vs-gdp-per-capita.csv` (48,169 rows × 7 columns)
 * **Domain:** Marine Ecology & Environmental Economics
 * **Brief Description:** This project investigates cross-national coastal plastic waste mismanagement in relation to GDP per capita and population scale. It tackles extreme multi-source matrix sparsity (pruning over 47,900 historical pre-plastic rows), propagates static continental metadata across fragmented time series, removes non-sovereign macro-regional aggregates (`OWID_*` codes) to prevent double-counting, and justifies high-waste island nation outliers.
+
+### 4. Stroke Prediction and Clinical Risk Factor Assessment
+
+* **Directory:** [projects/stroke_prediction/](projects/stroke_prediction/README.md)
+* **Dataset:** `healthcare-dataset-stroke-data.csv` (5,110 rows × 12 columns)
+* **Domain:** Healthcare & Clinical Diagnostics
+* **Brief Description:** This project analyzes clinical records to assess stroke vulnerability across demographic, behavioral, and biochemical biomarkers. It handles critical Missing At Random (MAR) non-random missingness in BMI caused by emergency acute stroke triage (preserving 40 stroke cases that would be lost to naive row deletion), recodes structural pediatric survey missingness in smoking status, prunes singleton demographic classes, and justifies severe diabetic hyperglycemia spikes (>200 mg/dL) as authentic high-risk clinical pathology.
+
