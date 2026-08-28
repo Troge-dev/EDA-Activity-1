@@ -155,13 +155,17 @@ assert df.isna().sum().sum() == 0, "Dataset contains unresolved missing values!"
 
 ### Prerequisites
 * Python 3.8+
-* pandas
-* numpy
+* pandas, numpy, matplotlib, seaborn, missingno
 
 Install requirements:
 ```bash
-pip install pandas numpy
+pip install pandas numpy matplotlib seaborn missingno
 ```
+
+### Execution Options
+* **Interactive Notebook:** Open and run [`water_potability_data_cleaning.ipynb`](file:///c:/Users/manda/OneDrive/Documents/3rd%20YEAR%20PROJ/EDA/PROJ/projects/water_potability/water_potability_data_cleaning.ipynb) in Jupyter / VS Code for step-by-step interactive charts, data profiling, and domain audit.
+* **Standalone Python Script:** Run `python clean_water_potability.py`.
+
 
 ### Execution
 Run the following script directly from the `projects/water_potability/` directory:
