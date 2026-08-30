@@ -1,41 +1,46 @@
-# Laboratory Activity 1: Data Cleaning Pipeline - Water Potability and Physicochemical Safety Assessment
+# Laboratory Activity 1: Data Cleaning Pipeline - Water Potability and Chemical Safety Assessment
 
 ## Project Overview
 
 This repository contains the collaborative data cleaning project for **Laboratory Activity 1: Data Cleaning**, submitted under the **Environment & Public Health** domain (aligned with UN Sustainable Development Goal 6: Clean Water and Sanitation).
 
-Clean drinking water is fundamental to human health and environmental biosecurity. However, water quality monitoring involves complex physicochemical assays (such as pH, Sulfates, Chloramines, and Trihalomethanes) that frequently suffer from uncalibrated sensor probes, selective laboratory test omission, and highly skewed geochemical concentrations.
+Clean drinking water is essential for human health and safety. In water quality monitoring, we collect measurements such as pH, mineral concentrations, and disinfectant levels to determine whether water is safe to drink (`Potability = 1`) or unsafe (`Potability = 0`).
 
-This project implements a domain-informed data cleaning pipeline using Python and Pandas to evaluate, clean, and standardize freshwater safety records.
+However, real-world water quality datasets frequently contain data quality issues:
+1. **Missing Test Results:** Expensive chemical assays (like Sulfate, pH, and Trihalomethanes) were not recorded for every sampled water body.
+2. **Sensor Errors:** Faulty or uncalibrated probes can produce impossible values (such as pH readings outside the 0 to 14 scale).
+3. **Extreme Values:** Natural mineral variations vs. corrupt telemetry spikes.
+
+This project implements a clear, domain-informed data cleaning pipeline using Python and Pandas to evaluate, clean, and standardize the water safety records.
 
 ---
 
-## Theoretical Framework: Data Preparation Lifecycle
+## Data Preparation: Key Concepts
 
-In data science and exploratory data analysis (DS311), preparing data for analysis involves distinct disciplines that operate in sequence:
+In our lessons, preparing data involves different steps that work together:
 
-| Stage | Core Objective | Scope in this Activity |
+| Stage | Goal | What We Do in this Activity |
 | :--- | :--- | :--- |
-| **Data Wrangling** | The broad, end-to-end umbrella process of gathering, structuring, cleaning, enriching, validating, and publishing data. | Overall workflow management from raw CSV ingestion to reporting. |
-| **Data Cleaning** | Detecting and correcting (or removing) corrupt, inaccurate, incomplete, duplicate, or out-of-bound records. | Enforcing pH boundaries (0–14), handling missing values via domain imputation, auditing duplicates, and pruning sensor artifacts. |
-| **Data Transformation** | Modifying the form, scale, or representation of variables without introducing new conceptual information. | Standardizing floating-point precision and validating target encoding format. |
-| **Feature Engineering** | Creating new domain-specific variables to improve predictive modeling. | Downstream modeling preparation (e.g., composite mineral ratios). |
+| **Data Wrangling** | The overall process of taking raw data and turning it into a usable format. | Managing the entire workflow from loading data to saving the cleaned file. |
+| **Data Cleaning** | Finding and fixing errors, missing values, duplicates, and invalid readings. | Fixing impossible pH values, filling missing numbers, checking duplicates, and checking outliers. |
+| **Data Transformation** | Changing the format or scale of data without adding new information. | Rounding decimal numbers and ensuring the target is a clean integer. |
+| **Feature Engineering** | Creating new variables from existing ones to help analysis or models. | (Optional for downstream modeling). |
 
 ```
 Data Cleaning  -->  Data Transformation  -->  Feature Engineering  -->  Statistical Modeling / EDA
 ```
 
-> **Core Guiding Principle:** *"We should not change data simply because it looks unusual. We first identify the problem, investigate its root cause and domain context, and then decide how it should be rigorously handled."*
+> **Core Guiding Principle:** *"We do not change data just because it looks unusual. We first check the data, understand why it looks that way, and choose the best way to handle it."*
 
 ---
 
 ## Research Question and Problem Statement
 
 ### The Real-World Environmental Problem
-Access to safe drinking water is threatened by natural mineral runoff and industrial chemical contamination. Public health authorities must assess water potability from laboratory samples, but incomplete testing records and probe measurement artifacts introduce high risk into automated water safety classification.
+Access to safe drinking water is threatened by natural mineral runoff and chemical contamination. Public health authorities must assess water potability from laboratory samples, but incomplete testing records and probe measurement artifacts introduce high risk into water safety classification.
 
 ### Core Investigation Question
-> *How can we systematically detect, audit, and clean sensor probe anomalies, laboratory test omissions, and mineral concentration outliers across aquatic physicochemical parameters to ensure that water safety classification strictly adheres to World Health Organization (WHO) safety standards?*
+> *How can we systematically detect, audit, and clean sensor probe anomalies, missing chemical tests, and mineral concentration outliers to ensure that water safety classification strictly adheres to World Health Organization (WHO) safety standards?*
 
 ---
 
@@ -64,20 +69,19 @@ Access to safe drinking water is threatened by natural mineral runoff and indust
 
 ---
 
-## Identified Data Quality Problems and Missingness Taxonomy
+## Identified Data Quality Problems
 
-Exploratory analysis using `df.info()`, `df.describe()`, and `df.isna().sum()` revealed four major data quality challenges evaluated under **Rubin's Missing Data Taxonomy (Rubin, 1976; Little & Rubin, 2020)**:
+Exploratory analysis using `df.info()`, `df.describe()`, and `df.isna().sum()` revealed four major data quality challenges:
 
-1. **Substantial Missing Values under Missing at Random (MAR):**
+1. **Substantial Missing Values across Chemical Tests:**
    * `Sulfate` is missing 781 values (~23.84%).
    * `ph` is missing 491 values (~14.99%).
    * `Trihalomethanes` is missing 162 values (~4.95%).
    * *Total Affected Rows:* 1,265 rows (38.61% of dataset).
-   * *Mechanism:* Missingness is related to selective laboratory assay protocols across sampled water bodies rather than completely random omission (MCAR).
 2. **Boundary Violations (Physically Impossible pH Values):**
-   * Uncalibrated pH meters produce out-of-scale readings (< 0 or > 14), violating the fundamental logarithmic definition of hydrogen ion activity ($-\log_{10}[a_{\text{H}^+}]$).
-3. **Heavy Skewness in Total Dissolved Solids (Solids):**
-   * Total Dissolved Solids show extreme right-skewed concentrations (> 50,000 ppm, approaching seawater salinity), requiring domain-informed distinction between natural brackish variance and sensor telemetry errors.
+   * Uncalibrated pH meters can produce out-of-scale readings (< 0 or > 14), which cannot represent real water chemistry.
+3. **Extreme Mineral Concentration Spikes (Solids):**
+   * Total Dissolved Solids show extreme right-skewed concentrations (> 50,000 ppm), requiring us to distinguish between natural mineral-rich groundwater and sensor errors.
 4. **Duplicate and Data Type Integrity:**
    * Auditing duplicate records (`df.duplicated()`) and ensuring binary target classification is mapped cleanly to `int64` with standardized 3-decimal floating-point precision.
 
@@ -101,11 +105,11 @@ df = pd.read_csv("water_potability.csv")
 invalid_ph_mask = (df["ph"] < 0) | (df["ph"] > 14)
 df.loc[invalid_ph_mask, "ph"] = np.nan
 ```
-* **Domain Rationale:** The pH scale measures the negative decimal logarithm of hydrogen ion activity in aqueous solutions. Values below 0 or above 14 represent probe hardware malfunction or calibration drift and must not be treated as valid aquatic observations.
+* **Rationale:** The pH scale is scientifically defined from 0 (very acidic) to 14 (very basic). Any reading outside this range represents an electrode or calibration defect.
 
 ---
 
-### Step 2: Class-Conditional Median Imputation for Missing Chemical Metrics
+### Step 2: Filling Missing Values by Water Safety Group
 
 * **Action:** Impute missing values in `ph`, `Sulfate`, and `Trihalomethanes` using the **median grouped by Potability class**.
 * **Code:**
@@ -113,21 +117,21 @@ df.loc[invalid_ph_mask, "ph"] = np.nan
 impute_cols = ["ph", "Sulfate", "Trihalomethanes"]
 
 for col in impute_cols:
-    # Use class-conditional median to prevent cross-class contamination
+    # Use class median to keep potable and non-potable profiles distinct
     df[col] = df.groupby("Potability")[col].transform(
         lambda group: group.fillna(group.median())
     )
 ```
-* **Domain & Statistical Rationale:**
-  * **Why Not `dropna()`?** Dropping rows would eliminate 1,265 observations (38.61% of data), severely depleting statistical power and inducing selection bias.
-  * **Why Median Over Mean?** Environmental parameters are skewed by localized mineralization. The median provides an outlier-resistant measure of central tendency.
-  * **Why Class-Conditional?** Potable and non-potable water exhibit distinct geochemical baselines. Grouping by `Potability` preserves class-specific profiles under the MAR framework.
+* **Rationale:**
+  * **Why not `dropna()`?** Deleting incomplete rows would discard 1,265 samples (38.61% of the dataset), causing severe loss of valuable information.
+  * **Why Median over Mean?** Chemical concentrations can have extreme spikes. The median represents the typical center and is resistant to outliers.
+  * **Why Group by Potability?** Potable (safe) and non-potable (unsafe) water have distinct chemical baselines. Grouping ensures we fill missing values with numbers that reflect each type of water.
 
 ---
 
 ### Step 3: Domain-Informed Outlier Treatment (Total Dissolved Solids)
 
-* **Action:** Evaluate mild ($1.5 \times \text{IQR}$) vs. extreme ($3.0 \times \text{IQR}$) fences to retain valid mineral-rich groundwater while capping corrupt telemetry spikes.
+* **Action:** Evaluate standard ($1.5 \times \text{IQR}$) vs. extreme ($3.0 \times \text{IQR}$) boundaries to keep natural mineral-rich water while pruning corrupt telemetry spikes.
 * **Code:**
 ```python
 # Calculate 3.0 * IQR extreme fence for Solids
@@ -138,15 +142,15 @@ upper_limit = q3 + 3.0 * iqr
 
 df = df[df["Solids"] <= upper_limit].reset_index(drop=True)
 ```
-* **Domain Rationale:** 
-  * High TDS (10,000–30,000 ppm) occurs naturally in deep mineral aquifers and brackish estuaries.
-  * Standard $1.5 \times \text{IQR}$ would erroneously eliminate 47 valid mineral-rich water samples (1.4%). Using a conservative $3.0 \times \text{IQR}$ threshold removes true telemetry errors while preserving genuine ecological variability.
+* **Rationale:** 
+  * High mineral content (10,000–30,000 ppm TDS) occurs naturally in deep mineral aquifers and coastal brackish water.
+  * A standard $1.5 \times \text{IQR}$ rule would delete 47 valid mineral-rich water samples. Using a conservative $3.0 \times \text{IQR}$ boundary preserves natural environmental variation while filtering out impossible sensor spikes (> 60,000 ppm).
 
 ---
 
 ### Step 4: Data Type Integrity and Precision Normalization
 
-* **Action:** Enforce integer typing on `Potability`, round continuous features to 3 decimal places, and verify pipeline assertions.
+* **Action:** Cast `Potability` to integer (`int64`), round continuous features to 3 decimal places, and verify data assertions.
 * **Code:**
 ```python
 # Ensure Potability is properly typed
@@ -162,7 +166,7 @@ assert df.isna().sum().sum() == 0, "Dataset contains unresolved missing values!"
 assert df["Potability"].isin([0, 1]).all(), "Potability contains non-binary values!"
 assert df.duplicated().sum() == 0, "Duplicate rows detected!"
 ```
-* **Rationale:** Ensures numerical stability and seamless compatibility with machine learning classifiers and EDA plotting routines.
+* **Rationale:** Ensures clean, consistent numbers ready for visualization and machine learning models.
 
 ---
 
@@ -178,18 +182,18 @@ df.to_csv("water_potability_cleaned.csv", index=False)
 
 ## Before vs. After Summary
 
-| Quality Check / Metric | Raw Dataset (`water_potability.csv`) | Cleaned Dataset (`water_potability_cleaned.csv`) |
+| Check / Metric | Raw Dataset (`water_potability.csv`) | Cleaned Dataset (`water_potability_cleaned.csv`) |
 | :--- | :--- | :--- |
 | **Total Rows** | 3,276 rows | 3,276 rows (100% sample retention) |
-| **Missing `Sulfate` Values** | 781 nulls (23.84%) | 0 nulls (Class-conditional median) |
-| **Missing `ph` Values** | 491 nulls (14.99%) | 0 nulls (Class-conditional median) |
-| **Missing `Trihalomethanes`** | 162 nulls (4.95%) | 0 nulls (Class-conditional median) |
+| **Missing `Sulfate` Values** | 781 nulls (23.84%) | 0 nulls (Filled via class median) |
+| **Missing `ph` Values** | 491 nulls (14.99%) | 0 nulls (Filled via class median) |
+| **Missing `Trihalomethanes`** | 162 nulls (4.95%) | 0 nulls (Filled via class median) |
 | **Total Incomplete Rows** | 1,265 rows (38.61%) | 0 rows (0.00% missing) |
-| **Out-of-Bound pH (< 0 or > 14)** | Audited / Present in telemetry | 0 (Sanitized to valid physical scale) |
+| **Out-of-Bound pH (< 0 or > 14)** | Audited / Present in telemetry | 0 (Sanitized to valid 0–14 scale) |
 | **Duplicate Records** | 0 duplicates | 0 duplicates |
-| **Max Solids (ppm)** | 61,227.20 ppm | 61,227.20 ppm (Validated within extreme fence) |
+| **Max Solids (ppm)** | 61,227.20 ppm | 61,227.20 ppm (Validated within extreme boundary) |
 | **Potable Water Ratio** | 39.01% (1,278 potable samples) | 39.01% (Class balance fully preserved) |
-| **Data Integrity Status** | Unsanitized / High null rate | Fully Cleaned / WHO-Aligned / Ready for EDA |
+| **Data Integrity Status** | 38.6% Incomplete Rows | Complete, Clean, and Ready for EDA |
 
 ---
 
@@ -211,19 +215,19 @@ pip install pandas numpy matplotlib seaborn missingno
 
 ## Oral Recitation and Presentation Defense Guide
 
-Be prepared to answer these core questions during the oral defense:
+Clear, simple answers to explain our cleaning decisions during presentation:
 
-### Question 1: Why did you use class-conditional median imputation instead of dropping missing rows?
-* **Defense Answer:** Over 38% of the dataset contained at least one missing chemical metric (`Sulfate` ~23.8%, `ph` ~15.0%, `Trihalomethanes` ~4.95%). Applying listwise deletion (`dropna()`) would eliminate 1,265 valid observations, significantly reducing statistical power and introducing severe selection bias (since missingness reflects selective testing rather than random failure). Grouping by `Potability` preserves the characteristic chemical signatures of potable vs. non-potable water under the Missing at Random (MAR) framework without introducing cross-class data leakage.
+### Question 1: Why did you fill missing values instead of deleting rows?
+* **Defense Answer:** Over 38% of the dataset (1,265 rows) had at least one missing chemical test. If we deleted those rows with `dropna()`, we would lose more than one-third of our data. Filling them keeps all 3,276 rows of data for analysis.
 
-### Question 2: Why is the median preferred over the mean for aquatic chemical metrics?
-* **Defense Answer:** Environmental chemical concentrations are heavily skewed by regional geological mineral deposits and industrial discharge plumes. The arithmetic mean is sensitive to extreme values, whereas the median provides a robust, outlier-resistant measure of central tendency that preserves the natural distribution shape.
+### Question 2: Why did you use the median instead of the mean?
+* **Defense Answer:** Environmental chemical levels often have extreme high or low values. The mean gets pulled by extreme numbers, but the median represents the typical center and is not affected by outliers.
 
-### Question 3: How does domain knowledge justify setting pH boundaries strictly between 0 and 14?
-* **Defense Answer:** pH is fundamentally defined as the negative logarithm of hydrogen ion activity ($-\log_{10}[a_{\text{H}^+}]$). In natural aqueous systems, valid readings strictly reside between 0 and 14 (potable drinking water is regulated by the WHO between 6.5 and 8.5). Values outside this range represent sensor hardware defects or calibration errors rather than actual water chemistry.
+### Question 3: Why did you fill missing values separately for Potable and Non-Potable water?
+* **Defense Answer:** Safe drinking water and unsafe water naturally have different chemical levels. Grouping by Potability ensures that we fill missing values with realistic numbers for each type of water.
 
-### Question 4: Why didn't you remove high Total Dissolved Solids using standard 1.5 x IQR?
-* **Defense Answer:** Natural water sources from deep mineral aquifers or coastal brackish estuaries naturally reach 10,000 to 30,000 ppm TDS without being recording errors. As taught in our lesson, *we should not change data simply because it looks unusual*. A strict 1.5 x IQR filter would erroneously delete 47 valid mineral-rich water samples. Using a conservative 3.0 x IQR threshold retains genuine ecological variability while protecting against true sensor telemetry spikes.
+### Question 4: Why must pH be between 0 and 14?
+* **Defense Answer:** The pH scale is scientifically defined from 0 (very acidic) to 14 (very basic). Any value outside this range is a faulty sensor reading, not real water chemistry.
 
-### Question 5: What is the distinction between Data Cleaning and Data Transformation in your pipeline?
-* **Defense Answer:** Data cleaning focused on detecting and fixing errors—enforcing pH physical boundaries, imputing missing assays, auditing duplicate records, and validating outlier limits. Data transformation standardized the representation without altering the underlying meaning—rounding continuous metrics to 3 decimal places for precision and explicitly casting the target `Potability` to `int64`.
+### Question 5: Why didn't you remove all high Total Dissolved Solids as outliers?
+* **Defense Answer:** Natural mineral water and groundwater can legitimately have high mineral levels (10,000 to 30,000 ppm). Removing them with a standard 1.5x IQR rule would delete valid natural water samples. Using an extreme 3.0x IQR cutoff keeps real water samples and only removes unrealistic sensor errors.
