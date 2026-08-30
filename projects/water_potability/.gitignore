@@ -1,0 +1,19 @@
+﻿# Jupyter Notebooks
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Python
+__pycache__/
+*.py[cod]
+*.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.env
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
